@@ -1,0 +1,24 @@
+{
+  "name": "nfe2ftp",
+  "version": "1.0.0",
+  "description": "Robo para enviar arquivos XML de notas fiscais eletrônicas para um repositório usando FTP.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bignotto/NFe2Ftp.git"
+  },
+  "keywords": [
+    "XML",
+    "NFe",
+    "FTP"
+  ],
+  "author": "Thiago Bignotto",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Bignotto/NFe2Ftp/issues"
+  },
+  "homepage": "https://github.com/Bignotto/NFe2Ftp#readme"
+}
