@@ -5,6 +5,8 @@ function start() {
     const content = {}
 
     content.files = getListaArquivosXml()
+
+    
     console.log(content)
 
     function getListaArquivosXml() {
