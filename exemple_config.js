@@ -14,7 +14,7 @@ appConfig.testing = {
     'time' : 1000 * 5, //tempo para verificar a pasta por novos xmls
     'ftpServer' : 'localhost',
     'ftpPort' : '21',
-    'ftpUser' : '',
+    'ftpUser' : 'anonymous',
     'ftpPass' : ''
 };
 

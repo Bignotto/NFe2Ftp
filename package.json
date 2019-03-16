@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/Bignotto/NFe2Ftp/issues"
   },
-  "homepage": "https://github.com/Bignotto/NFe2Ftp#readme"
+  "homepage": "https://github.com/Bignotto/NFe2Ftp#readme",
+  "dependencies": {
+    "basic-ftp": "^3.4.3"
+  }
 }
