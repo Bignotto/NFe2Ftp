@@ -5,12 +5,17 @@ var _config = require('./config')
 async function start() {
     const content = {}
 
+    //check for new files
     content.files = getListaArquivosXml()
     content.path = _config.originFolder
 
+    //conect to the FTP server
     const connection = await conectFtpServer()
     
-    //upoladFiles()
+    //upload all xml files to FTP server
+    await upoladFiles()
+
+
     //validateFiles()
     
     await connection.close()
@@ -50,6 +55,14 @@ async function start() {
         } catch (error) {
             console.error(error)
         }
+    }
+
+    async function upoladFiles() {
+        await connection.ensureDir(_config.destinationFolder)
+        for(i = 0;i<content.files.length;i++) {
+            await connection.upload(fs.createReadStream(content.path + '/' + content.files[i]),content.files[i])
+        }
+        console.log('..............................subiu')
     }
 }
 start()

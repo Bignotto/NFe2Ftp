@@ -9,7 +9,8 @@ var appConfig = {};
 appConfig.testing = {
     'envName' : 'testing',
     'hashSecret' : 'nonono',
-    'originFolder' : `C:\\xml\\nao_processado`, //pasta onde os xmls são criados
+    'originFolder' : '/mnt/c/xml/nao_processado', //pasta onde os xmls são criados
+    'destinationFolder' : '/mnt/E/FTP/nao_processado',
     'ftpFolder' : '', //pasta para enviar arquivos xmls
     'time' : 1000 * 5, //tempo para verificar a pasta por novos xmls
     'ftpServer' : 'localhost',
@@ -21,7 +22,8 @@ appConfig.testing = {
 appConfig.production = {
     'envName' : 'production',
     'hashSecret' : 'nonono',
-    'originFolder' : 'C:\\xml\\nao_processado', //pasta onde os xmls são criados
+    'originFolder' : '/mnt/c/xml/nao_processado', //pasta onde os xmls são criados
+    'destinationFolder' : '/mnt/E/FTP/nao_processado',
     'ftpFolder' : 'nao_processado', //pasta para enviar arquivos xmls
     'time' : 1000 * 5, //tempo para verificar a pasta por novos xmls
     'ftpServer' : '',
