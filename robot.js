@@ -1,6 +1,6 @@
-var fs = require('fs')
-var ftp = require('basic-ftp')
-var _config = require('./config')
+const fs = require('fs')
+const ftp = require('basic-ftp')
+const _config = require('./config')
 
 async function start() {
     const content = {}
@@ -46,9 +46,9 @@ async function start() {
         client.ftp.verbose = true
         try {
             await client.access({
-                host: 'localhost',
-                user: 'anonymous',
-                password: '',
+                host: _config.ftpServer,
+                user: _config.ftpUser,
+                password: _config.ftpPass,
                 secure: false
             })
             return client
