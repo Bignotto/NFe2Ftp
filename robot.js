@@ -11,15 +11,22 @@ async function start() {
 
     //conect to the FTP server
     const connection = await conectFtpServer()
+    var files = await connection.list();
     
     //upload all xml files to FTP server
     await upoladFiles()
 
 
-    //validateFiles()
+   if (await validateUploadedFiles() !== true) {
+        console.log('Validation failed')
+        return
+    }
+
+    //deleteUploadedFiles
     
     await connection.close()
     console.log(content)
+    console.log(files)
 
     function getListaArquivosXml() {
         //array com os nomes dos arquivos para upload
@@ -63,6 +70,20 @@ async function start() {
             await connection.upload(fs.createReadStream(content.path + '/' + content.files[i]),content.files[i])
         }
         console.log('..............................subiu')
+    }
+
+    async function validateUploadedFiles() {
+        await connection.ensureDir(_config.destinationFolder)
+        let filesList = await connection.list()
+
+        //validade number of files
+        if(filesList.length !== content.files.length)
+            return false
+
+        for(i = 0;i<filesList.length;i++) {
+            if(content.files.findIndex(filesList[i].name) === -1)
+                return false
+        }
     }
 }
 start()
