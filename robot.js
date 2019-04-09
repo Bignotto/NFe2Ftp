@@ -6,7 +6,7 @@ async function start() {
     const content = {}
 
     //check for new files
-    content.files = getListaArquivosXml()
+    content.files = getXmlFilesList()
     content.path = _config.originFolder
 
     //conect to the FTP server
@@ -15,17 +15,26 @@ async function start() {
     //upload all xml files to FTP server
     await upoladFiles()
 
+    //validate if all files were uploaded
+   if (await validateUploadedFiles() !== true) {
+        await connection.close()
+        console.log('Some file were not uploaded.')
+        return
+    } else {
+        console.log('all files ok!!')
+    }
 
-    //validateFiles()
+    //deleteUploadedFiles
     
     await connection.close()
-    console.log(content)
 
-    function getListaArquivosXml() {
-        //array com os nomes dos arquivos para upload
+
+    //list all XML files to upload to FTP and return an array with their names
+    function getXmlFilesList() {
+
         var xmlFiles = [];
 
-        //pattern para extensão do arqivo
+        //XML match pattern
         var pattern=/\.[0-9a-z]+$/i;
         try {
             xmlFiles = fs.readdirSync(_config.originFolder)
@@ -41,6 +50,7 @@ async function start() {
         })
     }
 
+    //connects to the FTP server and return a connection
     async function conectFtpServer() {
         const client = new ftp.Client()
         client.ftp.verbose = true
@@ -57,12 +67,31 @@ async function start() {
         }
     }
 
+    //send files in the array to the ftp server
     async function upoladFiles() {
         await connection.ensureDir(_config.destinationFolder)
         for(i = 0;i<content.files.length;i++) {
             await connection.upload(fs.createReadStream(content.path + '/' + content.files[i]),content.files[i])
         }
-        console.log('..............................subiu')
+    }
+
+    //validate if all files were uploaded
+    async function validateUploadedFiles() {
+        await connection.ensureDir(_config.destinationFolder)
+        let filesList = await connection.list()
+
+        //validade number of files
+        if(filesList.length !== content.files.length)
+            return false
+
+        //validade file names on both local folder and ftp folder
+        for(i = 0;i<filesList.length;i++) {
+            if(content.files.indexOf(filesList[i].name,0)===-1) {
+                return false
+            }
+        }
+        return true
     }
 }
+
 start()
