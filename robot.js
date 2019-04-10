@@ -1,14 +1,27 @@
 const fs = require('fs')
+const path = require('path')
 const ftp = require('basic-ftp')
 const _config = require('./config')
 
 async function start() {
     const content = {}
 
+    let timeDate = new Date();
+    let currentDate = timeDate.getFullYear()+'-'+(timeDate.getMonth()+1)+'-'+timeDate.getDate();
+    let currentTime = timeDate.getHours() + ":" + timeDate.getMinutes() + ":" + timeDate.getSeconds();
+
+    //console.log(currentDate+' '+currentTime)
+
     //check for new files
     content.files = getXmlFilesList()
     content.path = _config.originFolder
 
+    if(content.files.length === 0) {
+        console.log(currentDate + ' ' + currentTime + ': no XML files found on ' + _config.originFolder)
+        return
+    } else {
+        console.log(currentDate + ' ' + currentTime + ': found ' + content.files.length + ' XML files')
+    }
     //conect to the FTP server
     const connection = await conectFtpServer()
     
@@ -25,9 +38,9 @@ async function start() {
     }
 
     //deleteUploadedFiles
+    await deleteUploadedFiles()
     
     await connection.close()
-
 
     //list all XML files to upload to FTP and return an array with their names
     function getXmlFilesList() {
@@ -79,6 +92,7 @@ async function start() {
     async function validateUploadedFiles() {
         await connection.ensureDir(_config.destinationFolder)
         let filesList = await connection.list()
+        console.log('FTP server: ' + filesList.length + ' XML found')
 
         //validade number of files
         if(filesList.length !== content.files.length)
@@ -92,6 +106,18 @@ async function start() {
         }
         return true
     }
-}
 
-start()
+    async function deleteUploadedFiles() {
+        await fs.readdir(_config.originFolder, (err, files) => {
+            if (err) throw err;
+          
+            for (const file of files) {
+              fs.unlink(path.join(_config.originFolder, file), err => {
+                if (err) throw err;
+              });
+            }
+          });
+    }
+}
+//5 minutes 
+setInterval(start,300 * 1000)
