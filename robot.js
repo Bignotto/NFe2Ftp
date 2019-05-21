@@ -1,3 +1,4 @@
+require('dotenv').config()
 const fs = require('fs')
 const path = require('path')
 const ftp = require('basic-ftp')
@@ -14,10 +15,12 @@ async function start() {
 
     //check for new files
     content.files = getXmlFilesList()
-    content.path = _config.originFolder
+
+    //content.path = _config.originFolder
+    content.path = process.env.ORIGINFOLDER
 
     if(content.files.length === 0) {
-        console.log(currentDate + ' ' + currentTime + ': no XML files found on ' + _config.originFolder)
+        console.log(currentDate + ' ' + currentTime + ': no XML files found on ' + process.env.ORIGINFOLDER)
         return
     } else {
         console.log(currentDate + ' ' + currentTime + ': found ' + content.files.length + ' XML files')
@@ -50,7 +53,7 @@ async function start() {
         //XML match pattern
         var pattern=/\.[0-9a-z]+$/i;
         try {
-            xmlFiles = fs.readdirSync(_config.originFolder)
+            xmlFiles = fs.readdirSync(process.env.ORIGINFOLDER)
         } catch (err) {
             console.error(err)
         }
@@ -69,9 +72,9 @@ async function start() {
         client.ftp.verbose = true
         try {
             await client.access({
-                host: _config.ftpServer,
-                user: _config.ftpUser,
-                password: _config.ftpPass,
+                host: process.env.FTPSERVER,
+                user: process.env.FTPUSER,
+                password: process.env.FTPPASS,
                 secure: false
             })
             return client
@@ -82,7 +85,7 @@ async function start() {
 
     //send files in the array to the ftp server
     async function upoladFiles() {
-        await connection.ensureDir(_config.destinationFolder)
+        await connection.ensureDir(process.env.DESTINATIONFOLDER)
         for(i = 0;i<content.files.length;i++) {
             await connection.upload(fs.createReadStream(content.path + '/' + content.files[i]),content.files[i])
         }
@@ -90,7 +93,7 @@ async function start() {
 
     //validate if all files were uploaded
     async function validateUploadedFiles() {
-        await connection.ensureDir(_config.destinationFolder)
+        await connection.ensureDir(process.env.DESTINATIONFOLDER)
         let filesList = await connection.list()
         console.log('FTP server: ' + filesList.length + ' XML found')
 
@@ -108,16 +111,18 @@ async function start() {
     }
 
     async function deleteUploadedFiles() {
-        await fs.readdir(_config.originFolder, (err, files) => {
+        await fs.readdir(process.env.ORIGINFOLDER, (err, files) => {
             if (err) throw err;
           
             for (const file of files) {
-              fs.unlink(path.join(_config.originFolder, file), err => {
+              fs.unlink(path.join(process.env.ORIGINFOLDER, file), err => {
                 if (err) throw err;
               });
             }
           });
     }
 }
-//5 minutes 
+//run the first time immediately
+start()
+//then run every 5 minutes 
 setInterval(start,300 * 1000)
