@@ -125,4 +125,4 @@ async function start() {
 //run the first time immediately
 start()
 //then run every 5 minutes 
-setInterval(start,300 * 1000)
+setInterval(start,process.env.TIME * 1000)
